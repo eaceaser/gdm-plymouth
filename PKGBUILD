@@ -3,11 +3,13 @@
 # Contributor: Jan de Groot <jgc@archlinux.org>
 # Contributor: Damian01w <damian01w@gmail.com>
 
-_pkgbase=gdm
+_pkgbase=gdm-gnome
+_pkgver=3-28
+_pkghash=b3224275a137b786b1dd4e5fa93024deb57d41e0
 pkgbase=gdm-plymouth
 pkgname=(gdm-plymouth libgdm-plymouth)
 pkgver=3.28.1
-pkgrel=1
+pkgrel=2
 pkgdesc="Gnome Display Manager with Plymouth support."
 arch=('x86_64')
 license=(GPL)
@@ -15,15 +17,15 @@ url="http://www.gnome.org"
 depends=('plymouth' 'gnome-shell>=3.28.1' 'gnome-session' 'upower' 'xorg-xrdb' 'xorg-server' 'xorg-server-xwayland' 'xorg-xhost')
 makedepends=('intltool' 'yelp-tools' 'gobject-introspection')
 checkdepends=('check')
-source=("https://git.gnome.org/browse/gdm/snapshot/${_pkgbase}-${pkgver}.tar.xz"
-	"0002-Xsession-Don-t-start-ssh-agent-by-default.patch"
-	"gdm.sysusers")
-sha256sums=('97e71e9bbf90d9e85ec3715d05f75b2a81d7f55b014c25cbd236bf4054807a93'
+source=("https://gitlab.gnome.org/GNOME/gdm/-/archive/gnome-3-28/gdm-gnome-3-28-1.tar.bz2"
+        "0002-Xsession-Don-t-start-ssh-agent-by-default.patch"
+        "gdm.sysusers")
+sha256sums=('778d3d177af4db0713ae0852901ababf69ffce85d62a1996f0501cd6bea26365'
             '63f99db7623f078e390bf755350e5793db8b2c4e06622caf42eddc63cd39ecca'
             '6d9c8e38c7de85b6ec75e488585b8c451f5d9b4fabd2a42921dc3bfcc4aa3e13')
 
 prepare() {
-  cd $_pkgbase-${pkgver}
+  cd ${_pkgbase}-${_pkgver}-${_pkghash}
 
   patch -Np1 -i ../0002-Xsession-Don-t-start-ssh-agent-by-default.patch
 
@@ -31,7 +33,7 @@ prepare() {
 }
 
 build() {
-  cd $_pkgbase-${pkgver}
+  cd ${_pkgbase}-${_pkgver}-${_pkghash}
   ./configure \
     --prefix=/usr \
     --sbindir=/usr/bin \
@@ -53,7 +55,7 @@ build() {
 }
 
 check() {
-  cd $_pkgbase-${pkgver}
+  cd ${_pkgbase}-${_pkgver}-${_pkghash}
   make check
 }
 
@@ -68,7 +70,7 @@ package_gdm-plymouth() {
   groups=(gnome)
   install=gdm-plymouth.install
 
-  cd $_pkgbase-${pkgver}
+  cd ${_pkgbase}-${_pkgver}-${_pkghash}
   make DESTDIR="$pkgdir" install
 
   chown -R 120:120 "$pkgdir/var/lib/gdm"
@@ -89,7 +91,7 @@ package_libgdm-plymouth() {
   provides=("libgdm")
   conflicts=("libgdm")
 
-  cd $_pkgbase-${pkgver}
+  cd ${_pkgbase}-${_pkgver}-${_pkghash}
   make -C libgdm DESTDIR="$pkgdir" install
   install -Dm644 "$srcdir/org.gnome.login-screen.gschema.xml" \
     "$pkgdir/usr/share/glib-2.0/schemas/org.gnome.login-screen.gschema.xml"
